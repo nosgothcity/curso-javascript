@@ -6,6 +6,7 @@ function Product (productName, productBrand, productSku, productPrice, hasDiscou
     this.hasDiscount = hasDiscount
     this.discount = productDiscount
     this.finalPrice = finalPrice
+    this.date = new Date()
 }
 
 const aditionalDiscountByBrand = ['samsung', 'lg', 'sony', 'trotter', 'philips']
@@ -85,4 +86,5 @@ const main = () => {
 const RESULT = main()
 
 console.log(RESULT)
+console.log("Fecha: " + RESULT.date.toLocaleDateString())
 console.log("El producto " + RESULT.name + " con marca " + RESULT.brand + " tiene el precio final de: " + RESULT.finalPrice)

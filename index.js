@@ -1,90 +1,125 @@
-function Product (productName, productBrand, productSku, productPrice, hasDiscount, productDiscount, finalPrice = 0) {
-    this.name = productName
-    this.brand = productBrand
-    this.sku = productSku
-    this.price = productPrice
-    this.hasDiscount = hasDiscount
-    this.discount = productDiscount
-    this.finalPrice = finalPrice
-    this.date = new Date()
-}
-
+const products = []
 const aditionalDiscountByBrand = ['samsung', 'lg', 'sony', 'trotter', 'philips']
+let form
+let productSku
+let productName
+let productBrand
+let productPrice
+let productDiscount
+let hasDiscount = false
+let productsContainer
 
-const requestData = request => {
-    let flag = true
-    let dataRequest = ''
+class Product {
+    constructor (productSku, productName, productBrand, productPrice, discount, hasSpecialDiscount = false) {
+        this.name = productName
+        this.brand = productBrand
+        this.sku = productSku
+        this.price = productPrice
+        this.discount = discount
+        this.hasSpecialDiscount = hasSpecialDiscount
+        this.finalPrice = productPrice
+        this.date = new Date()    
+    }
 
-    while(flag){
-        dataRequest = prompt(request.message).trim()
+    calculateFinalPrice = () => {
+        if(this.discount > 0){
+            let discountPrice = (this.price * this.discount) / 100
+            this.finalPrice = this.price - discountPrice
+        }
 
-        if((request.type === 'productPrice' || request.type === 'productDiscount') && dataRequest !== "" && !isNaN(dataRequest)){
-            dataRequest = parseInt(dataRequest)
-            flag = false
-        } else if((request.type === 'productName' || request.type === 'productBrand' || request.type === 'productSku') && dataRequest !== "") {
-            dataRequest = dataRequest.toLowerCase()
-            flag = false
-        } else {
-            alert('Ingrese un dato valido')
+        const DISCOUNT_CHECKER = aditionalDiscountByBrand.some(brand => brand === this.brand)
+        if(DISCOUNT_CHECKER){
+            this.hasSpecialDiscount = true
+            let aditionalDiscount = (this.finalPrice * 5) / 100
+            this.finalPrice = this.finalPrice - aditionalDiscount
         }
     }
-
-    return dataRequest
 }
 
-const calculateFinalPrice = objectProduct => {
-    let finalPrice = objectProduct.price
-    if(objectProduct.hasDiscount){
-        let discountPrice = (objectProduct.price * objectProduct.discount) / 100
-        finalPrice = objectProduct.price - discountPrice
+function initElements() {
+    console.log("Inicialianzado elementos")
+    form = document.getElementById("product-from")
+    productSku = document.getElementById("product-sku")
+    productName = document.getElementById("product-name")
+    productBrand = document.getElementById("product-brand")
+    productPrice = document.getElementById("product-price")
+    productDiscount = document.getElementById("product-discount")
+    productsContainer = document.getElementById("products-container")
+}
+
+function initEvents() {
+    form.onsubmit = (event) => dataValidate(event)
+}
+
+const dataValidate = event => {
+    event.preventDefault()
+    let formProductSku = productSku.value.toLowerCase()
+    let formProductName = productName.value.toLowerCase()
+    let formProductBrand = productBrand.value.toLowerCase()
+    let formProductPrice = parseFloat(productPrice.value)
+    let formProductDiscount = parseFloat(productDiscount.value)
+    const productExist = products.some(product => product.sku === formProductSku)
+    if (!productExist) {
+        const newProduct = new Product(formProductSku, formProductName, formProductBrand, formProductPrice, formProductDiscount)
+        newProduct.calculateFinalPrice()
+
+        products.push(newProduct)
+        form.reset()
+
+        showProducts()
+    } else {
+        alert("El Sku del producto ya existe")
     }
+  
+}
 
-    //Verificando si tiene un descuento adicional dependiendo de la marca de un 10% adicional e el precio final...
-    const DISCOUNT_CHECKER = aditionalDiscountByBrand.filter(brand => brand === objectProduct.brand)
-    if(DISCOUNT_CHECKER.length > 0){
-        console.log("El Producto tiene un 10% de descuento ADICIONAL por la marca.")
-        // Se simplifica la obtencion del 10% de descuento para el precio final del producto dividiendo por 10...
-        let aditionalDiscount = finalPrice / 10
-        finalPrice = finalPrice - aditionalDiscount
+const deleteProduct = productSku => {
+    let elementToDelete = document.getElementById(`column-${productSku}`)
+    let deleteProductFromArray = products.findIndex(product => product.sku === productSku)
+    products.splice(deleteProductFromArray, 1)
+    elementToDelete.remove()
+}
+
+const showProducts = () => {
+    productsContainer.innerHTML = ""
+    for (const product of products) {
+        console.log("show product", product)
+        let specialDiscount = 'No'
+        let discount = '';
+        if(product.hasSpecialDiscount){
+            specialDiscount = 'Si'
+        }
+        if(product.discount > 0){
+            discount = `<p class="card-text">Descuento: <b>${product.discount}</b></p>`
+        }
+        const column = document.createElement("div")
+        column.className = "col-md-4 mt-3"
+        column.id = `column-${product.sku}`
+        column.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">SKU: <b>${product.sku}</b></p>
+                    <p class="card-text">Nombre: <b>${product.name}</b></p>
+                    <p class="card-text">Marca: <b>${product.brand}</b></p>
+                    <p class="card-text">Precio Base: <b>${product.price}</b></p>
+                    ${discount}
+                    <p class="card-text">¿Tiene descuento especial adicional del 5%?: <b>${specialDiscount}</b></p>
+                    <p class="card-text">Precio Final: <b>${product.finalPrice}</b></p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-danger" id="product-${product.sku}" >Eliminar</button>
+                </div>
+            </div>`
+
+        productsContainer.append(column)
+        const deleteButton = document.getElementById(`product-${product.sku}`)
+        deleteButton.onclick = () => deleteProduct(product.sku)    
     }
-
-    return finalPrice;
-
 }
 
 const main = () => {
-    alert("Ingrese los datos de un producto: Nombre, Marca, Id/SKU, Precio y Descuento.\nLas siguientes marcas tienen un descuento adicional del 10% para sus productos: Samsung, LG, Sony, Trotter y Philips.")
-    let productName = prompt('Ingrese el nombre del producto...').trim().toLowerCase()
-    let productBrand = prompt('Ingrese la marca del producto').trim().toLowerCase()
-    let productSku = prompt('Ingrese el Id/SKU del producto').trim().toLowerCase()
-    let productPrice = parseInt(prompt('Ingrese el precio base del producto'))
-    let productDiscount = parseInt(prompt('El producto tendrá descuento?. Si lo tendrá, ingrese el % de descuento (número entre 0 a 90)'))
-    let hasDiscount = false
-
-    if(productName === ''){
-        productName = requestData({type: "productName", message:"Ingrese el nombre del producto..."})
-    } else if (productBrand === '') {
-        productBrand = requestData({type: "productBrand", message:"Ingrese la marca del producto..."})
-    } else if (productSku === '') {
-        productSku = requestData({type: "productSku", message:"Ingrese el Id/SKU del producto..."})
-    } else if (productPrice === '' || isNaN(productPrice)) {
-        productPrice = requestData({type: "productPrice", message:"Ingrese el precio base del producto..."})
-    } else if (productDiscount === '' || productDiscount === NaN || productDiscount < 0 || productDiscount > 90) {
-        productDiscount = requestData({type: "productDiscount", message:"El producto tendrá descuento?. Si lo tendrá, ingrese el % de descuento (número entre 0 a 90)..."})
-    }
-    
-    if(productDiscount > 0 && productDiscount <= 90){
-        hasDiscount = true
-    }
-
-    const objectProduct = new Product(productName, productBrand, productSku, productPrice, hasDiscount, productDiscount)
-    objectProduct.finalPrice = calculateFinalPrice(objectProduct);
-
-    return objectProduct
+    initElements()
+    initEvents()
 }
 
-const RESULT = main()
-
-console.log(RESULT)
-console.log("Fecha: " + RESULT.date.toLocaleDateString())
-console.log("El producto " + RESULT.name + " con marca " + RESULT.brand + " tiene el precio final de: " + RESULT.finalPrice)
+main()

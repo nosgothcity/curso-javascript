@@ -48,7 +48,7 @@ class Product {
     }
 }
 
-function initElements() {
+const initElements = () => {
     console.log("Inicialianzado elementos")
     loginUser = document.getElementById("init-user")
     addProducts = document.getElementById("add-products")
@@ -65,7 +65,7 @@ function initElements() {
     productsContainer = document.getElementById("products-container")
 }
 
-function initEvents() {
+const initEvents = () => {
     form.onsubmit = (event) => dataValidate(event)
     login.onsubmit = (event) => userLogin(event)
 }

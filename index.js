@@ -14,6 +14,7 @@ let productName
 let productBrand
 let productPrice
 let productDiscount
+let showErrorSku
 let hasDiscount = false
 let productsContainer
 const trashIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -56,6 +57,7 @@ const initElements = () => {
     showUser = document.getElementById("show-user")
     form = document.getElementById("product-from")
     login = document.getElementById("login-form")
+    showErrorSku = document.getElementById("error-message-sku")
     user = document.getElementById("user")
     productSku = document.getElementById("product-sku")
     productName = document.getElementById("product-name")
@@ -72,6 +74,7 @@ const initEvents = () => {
 
 const dataValidate = event => {
     event.preventDefault()
+    showErrorSku.hidden = true
     let formProductSku = productSku.value.toLowerCase()
     let formProductName = productName.value.toLowerCase()
     let formProductBrand = productBrand.value.toLowerCase()
@@ -86,7 +89,7 @@ const dataValidate = event => {
         storageProductsByUser()
         showProducts()
     } else {
-        alert("El Sku del producto ya existe")
+        showErrorSku.hidden = false
     }
   
 }

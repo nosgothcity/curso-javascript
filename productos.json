@@ -1,0 +1,72 @@
+[
+    {
+        "sku": "sku 1",
+        "name": "name 1",
+        "brand": "brand 1",
+        "price": 6,
+        "discount": 84,
+        "hasSpecialDiscount": false,
+        "finalPrice": 94,
+        "date": "date 1"
+    },
+    {
+        "sku": "sku 2",
+        "name": "name 2",
+        "brand": "brand 2",
+        "price": 35,
+        "discount": 21,
+        "hasSpecialDiscount": false,
+        "finalPrice": 35,
+        "date": "date 2"
+    },
+    {
+        "sku": "sku 3",
+        "name": "name 3",
+        "brand": "brand 3",
+        "price": 3,
+        "discount": 60,
+        "hasSpecialDiscount": false,
+        "finalPrice": 59,
+        "date": "date 3"
+    },
+    {
+        "sku": "sku 4",
+        "name": "name 4",
+        "brand": "brand 4",
+        "price": 54,
+        "discount": 5,
+        "hasSpecialDiscount": false,
+        "finalPrice": 2,
+        "date": "date 4"
+    },
+    {
+        "sku": "sku 5",
+        "name": "name 5",
+        "brand": "brand 5",
+        "price": 68,
+        "discount": 97,
+        "hasSpecialDiscount": false,
+        "finalPrice": 71,
+        "date": "date 5"
+    },
+    {
+        "sku": "sku 6",
+        "name": "name 6",
+        "brand": "brand 6",
+        "price": 5,
+        "discount": 6,
+        "hasSpecialDiscount": false,
+        "finalPrice": 40,
+        "date": "date 6"
+    },
+    {
+        "sku": "sku 7",
+        "name": "name 7",
+        "brand": "brand 7",
+        "price": 26,
+        "discount": 39,
+        "hasSpecialDiscount": false,
+        "finalPrice": 14,
+        "date": "date 7"
+    }
+]

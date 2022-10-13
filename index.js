@@ -1,4 +1,5 @@
 const products = []
+const apiProducts = []
 let userData
 const aditionalDiscountByBrand = ['samsung', 'lg', 'sony', 'trotter', 'philips']
 let form
@@ -159,7 +160,8 @@ const showProducts = () => {
     }
 }
 
-const userLogin = event => {
+const userLogin = async event => {
+    console.log('realizando login....')
     event.preventDefault()
     userData = user.value
     sessionStorage.setItem("user", userData)
@@ -168,16 +170,61 @@ const userLogin = event => {
     if(savedUser){
         products.push(...(JSON.parse(savedUser)))
         console.log("EXISTEN PRODUCTOS DEL USUARIO", products)
-        showProducts()
     } else {
+        console.log("NUEVO USUARIO: AGREGANDO PRODUCTOS EN ARCHIVO JSON POR MEDIO DE FETCH")
+        await getProductsWithApi()
         localStorage.setItem(`products-${userData}`, products)
     }
 
+    showProducts()
     loginUser.hidden = true
     listProducts.hidden = false
     showUser.hidden = false
     showUser.innerHTML += ` ${userData}`
     console.log("USUARIO GUARDADO:",sessionStorage.getItem("user"))
+}
+
+const getProductsWithApi = async () => {
+    try{
+        const response = await fetch("https://63475439db76843976a9fc24.mockapi.io/api/v1/products/productos/")
+        const data = await response.json()
+        console.log('PRODUCTS FROM API', data)
+        products.push(... data)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const newProductWithApi = async () => {
+    let productoRandom = {
+        sku: "1234qwer121312",
+        name: "galaxy font4",
+        brand: "samsung",
+        price: 123123,
+        discount: 10,
+        hasSpecialDiscount: true,
+        finalPrice: 105270,
+        date: "2022-10-12T23:58:24.076Z",
+    }
+
+    try{
+        const response = await fetch("https://63475439db76843976a9fc24.mockapi.io/api/v1/products/productos/", {
+            method: 'POST',
+            body: JSON.stringify(productoRandom),
+        })
+    } catch (error) {
+        console.log(error)  
+    }
+}
+
+const deleteProductWithApi = async product => {
+    try{
+        const response = await fetch("https://63475439db76843976a9fc24.mockapi.io/api/v1/products/productos/", {
+            method: 'DELETE',
+        })
+    } catch (error) {
+        console.log(error)  
+    }
 }
 
 const storageProductsByUser = () => {
